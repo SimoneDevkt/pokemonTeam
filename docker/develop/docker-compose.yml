@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:7.0-rc-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - ../../mongo/:/data/db
+    networks:
+      node-network:      
+        ipv4_address: 10.5.0.5
+  api:
+    container_name: nextjs-docker
+    restart: always
+    build:
+      context: ../../
+      dockerfile: ./docker/develop/Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongodb
+    volumes:
+      - ../../src/:/app/src/
+      - ../../public/:/app/public/
+      - ../../.eslintrc.json:/app/.eslintrc.json
+      - ../../next.config.js:/app/next.config.js
+      - ../../postcss.config.js:/app/postcss.config.js
+      - ../../tailwind.config.js:/app/tailwind.config.js
+      - ../../tsconfig.json:/app/tsconfig.json
+    #command: npm run start:dev    
+    networks:
+      node-network:      
+        ipv4_address: 10.5.0.7
+    
+volumes:
+  dbdata6:
+
+networks:
+  node-network:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
