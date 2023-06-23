@@ -4,6 +4,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { NavBar } from "@/components/navbar/navbar";
 
 export default function Create() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function Create() {
       "team": ""
     }
   });
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     console.log(data);
     try {
       const response = await axios.post('/api/team', data);      
@@ -33,6 +34,8 @@ export default function Create() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-24">
+      
+      <NavBar></NavBar>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h1>Create Team</h1>
         

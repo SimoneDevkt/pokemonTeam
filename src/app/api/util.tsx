@@ -2,6 +2,9 @@ import axios from 'axios';
 import { MongoClient } from 'mongodb'
 import { Pokemon } from './model/pokemonInfo';
 
+const uri = 'mongodb://10.5.0.5:27017';//TODO get uri from .env
+const client = new MongoClient(uri);
+
 export const getPokemon = async (id: number): Promise<Pokemon> => {
     let p: any = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)).data
 
@@ -16,13 +19,10 @@ export const getPokemon = async (id: number): Promise<Pokemon> => {
 }
 
 export const addTeam = async (teamName: string, pokemon: Pokemon): Promise<void> => {
-    const uri = 'mongodb://10.5.0.5:27017';//TODO get uri from .env
-    const client = new MongoClient(uri);
-
     try {
         await client.connect();
         const database = client.db('pokemon_team');
-        const pokemonCollection = database.collection('team');        
+        const pokemonCollection = database.collection('team');
 
         await pokemonCollection.insertOne({
             _id: teamName,
@@ -31,6 +31,21 @@ export const addTeam = async (teamName: string, pokemon: Pokemon): Promise<void>
         console.log('Team succesfull add');
     } catch (error) {
         throw new Error(`Errore on addTeam: ${error}`);
+    } finally {
+        await client.close();
+    }
+}
+
+export const getTeams = async () => {
+    try {
+        await client.connect();
+        const database = client.db('pokemon_team');
+        const pokemonCollection = database.collection('team');
+
+        const teams = await pokemonCollection.find().toArray();
+        return teams;
+    } catch (error) {
+        console.error('Errore on getTeams:', error);
     } finally {
         await client.close();
     }

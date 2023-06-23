@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 //const { MongoClient } = require('mongodb');
 
-import { getPokemon, addTeam } from '../util';
+import { getPokemon, addTeam, getTeams } from '../util';
 
 
 
@@ -20,6 +20,13 @@ export async function POST(request: Request) {
     } catch (error) {
         return NextResponse.json({ error: 'Generic Error' }, { status: 400 })
     }
+}
 
-    
+export async function GET(request: Request) { 
+    try {        
+        let teams = await getTeams()
+        return NextResponse.json(teams, {status: 200})
+    } catch (error) {
+        return NextResponse.json({ error: 'Generic Error' }, { status: 400 })
+    }
 }
